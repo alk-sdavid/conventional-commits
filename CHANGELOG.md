@@ -1,3 +1,11 @@
+# 1.0.5
+
+## What's Changed
+* chore(doc): add some changes by @alk-sdavid in https://github.com/alk-sdavid/conventional-commits/pull/4
+
+
+**Full Changelog**: https://github.com/alk-sdavid/conventional-commits/compare/v1.0.4...v1.0.5
+
 # 1.0.4
 
 ## What's Changed
