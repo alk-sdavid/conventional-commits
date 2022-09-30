@@ -23,8 +23,23 @@ jobs:
           git remote add ci $GIT_URL
         env:
           GITHUB_TOKEN: ${{ secrets.SEB_GITHUB_TOKEN }}
+      - uses: actions/github-script@v6
+        id: set-semver
+        with:
+          result-encoding: string
+          script: |
+            const commits = ${{ toJSON(github.event.commits.*.message) }}
+            for (const commit of commits) {
+              if (/^feat(\(.+\))?:/.test(commit)) {
+                return 'minor'
+              } else if (/^[a-z]+(\(.+\))?!:/.test(commit)) {
+                return 'major'
+              }
+            }
+            return 'patch'
       - name: Patch package
-        run: npm version patch --no-git-tag-version
+        run: |
+          npm version ${{steps.set-semver.outputs.result}} --no-git-tag-version
       - name: Github release
         run: |
           VERSION=$(node -p "require('./package.json').version")
