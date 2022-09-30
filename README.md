@@ -1,5 +1,5 @@
 # conventional-commits
 
-Change #2
+Change #3
 
 Another change #2
