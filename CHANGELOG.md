@@ -1,3 +1,11 @@
+# 2.0.0
+
+## What's Changed
+* fix(cd)!: fix semantic versioning by @alk-sdavid in https://github.com/alk-sdavid/conventional-commits/pull/8
+
+
+**Full Changelog**: https://github.com/alk-sdavid/conventional-commits/compare/v1.1.0...v2.0.0
+
 # 1.1.0
 
 ## What's Changed
