@@ -1,3 +1,11 @@
+# 1.1.0
+
+## What's Changed
+* feat(cd): semantic versioning by @alk-sdavid in https://github.com/alk-sdavid/conventional-commits/pull/7
+
+
+**Full Changelog**: https://github.com/alk-sdavid/conventional-commits/compare/v1.0.7...v1.1.0
+
 # 1.0.7
 
 ## What's Changed
