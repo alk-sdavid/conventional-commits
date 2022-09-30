@@ -18,24 +18,34 @@ jobs:
       - name: Setup git
         run: |
           GIT_URL="https://alk-sdavid:${GITHUB_TOKEN}@github.com/alk-sdavid/conventional-commits.git"
-          git config --global user.email alk-sdavid@salsify.com
-          git config --global user.name alk-sdavid
-          git remote add ci $GIT_URL ||:
+          git config --global user.email 50570955+alk-sdavid@users.noreply.github.com
+          git config --global user.name "Sébastien David (seb)"
+          git remote add ci $GIT_URL
         env:
           GITHUB_TOKEN: ${{ secrets.SEB_GITHUB_TOKEN }}
       - name: Patch package
-        run: |
-          npm version patch -m 'chore(release): v%s [ci skip]'
-      - name: Push tag
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          git push ci v$VERSION
+        run: npm version patch --no-git-tag-version
       - name: Github release
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          gh release create v$VERSION --title "$VERSION" --generate-notes
+          TAG=v$VERSION
+          gh release view $TAG || EXIT_STATUS=$?
+          if [[ $EXIT_STATUS -eq 0 ]]; then
+            gh release edit $TAG --title "$VERSION" --generate-notes --draft
+          else
+            git tag --force $TAG
+            git push --force ci $TAG
+            gh release create $TAG --title "$VERSION" --generate-notes --draft
+          fi
+          RELEASE_BODY=$(gh release view $TAG --json body --jq .body)
+          CHANGELOG=$(cat CHANGELOG.md)
+          printf "# $VERSION\n\n$RELEASE_BODY\n\n$CHANGELOG" > CHANGELOG.md
+          git add package.json package-lock.json CHANGELOG.md
+          git commit --message "chore(release): $VERSION [ci skip]"
+          git push ci main
+          git tag --force $TAG
+          git push --force ci $TAG
+          gh release edit $TAG --draft=false
         env:
           GITHUB_TOKEN: ${{ secrets.SEB_GITHUB_TOKEN }}
-      - name: Push commit
-        run: |
-          git push ci main
+
