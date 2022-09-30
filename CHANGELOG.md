@@ -1,3 +1,11 @@
+# 1.0.7
+
+## What's Changed
+* Another dumb change by @alk-sdavid in https://github.com/alk-sdavid/conventional-commits/pull/6
+
+
+**Full Changelog**: https://github.com/alk-sdavid/conventional-commits/compare/v1.0.6...v1.0.7
+
 # 1.0.6
 
 ## What's Changed
