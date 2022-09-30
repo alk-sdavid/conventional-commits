@@ -18,24 +18,55 @@ jobs:
       - name: Setup git
         run: |
           GIT_URL="https://alk-sdavid:${GITHUB_TOKEN}@github.com/alk-sdavid/conventional-commits.git"
-          git config --global user.email alk-sdavid@salsify.com
-          git config --global user.name alk-sdavid
-          git remote add ci $GIT_URL ||:
+          git config --global user.email 50570955+alk-sdavid@users.noreply.github.com
+          git config --global user.name "Sébastien David (seb)"
+          git remote add ci $GIT_URL
         env:
           GITHUB_TOKEN: ${{ secrets.SEB_GITHUB_TOKEN }}
       - name: Patch package
-        run: |
-          npm version patch -m 'chore(release): v%s [ci skip]'
-      - name: Push tag
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          git push ci v$VERSION
+        run: npm version patch --no-git-tag-version
       - name: Github release
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          gh release create v$VERSION --title "$VERSION" --generate-notes
+          TAG=v$VERSION
+
+          echo "Releasing tag $TAG"
+          gh release view $TAG && DELETE_RELEASE=1 || DELETE_RELEASE=0
+          if [[ $DELETE_RELEASE -eq 1 ]]; then
+            echo "Deleting release $TAG"
+            gh release delete $TAG --yes
+          fi
+
+          echo "Push tag $TAG"
+          git tag --force $TAG
+          git push --force ci $TAG
+
+          echo "Creating release $TAG"
+          gh release create $TAG --title "$VERSION" --generate-notes --draft
+
+          for i in $(seq 1 3); do
+            echo "Waiting for release $TAG to be created #$i"
+            RELEASE_BODY=$(gh release view $TAG --json body --jq .body) && \
+              RELEASE_FOUND=1 && break || RELEASE_FOUND=0
+            sleep 5
+          done
+          if [[ $RELEASE_FOUND -eq 0 ]]; then
+            exit 1
+          fi
+
+          echo "Updating changelog"
+          CHANGELOG=$(cat CHANGELOG.md)
+          printf "# $VERSION\n\n$RELEASE_BODY\n\n$CHANGELOG" > CHANGELOG.md
+
+          echo "Updating release $TAG"
+          git add package.json package-lock.json CHANGELOG.md
+          git commit --message "chore(release): $VERSION [ci skip]"
+          git push ci HEAD:main
+          git tag --force $TAG
+          git push --force ci $TAG
+
+          echo "Publishing release $TAG"
+          gh release edit $TAG --draft=false
         env:
           GITHUB_TOKEN: ${{ secrets.SEB_GITHUB_TOKEN }}
-      - name: Push commit
-        run: |
-          git push ci main
+
