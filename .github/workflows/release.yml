@@ -23,6 +23,7 @@ jobs:
           git remote add ci $GIT_URL
         env:
           GITHUB_TOKEN: ${{ secrets.SEB_GITHUB_TOKEN }}
+      - run: echo "${{toJSON(github.event)}}"
       - uses: actions/github-script@v6
         id: set-semver
         with:
