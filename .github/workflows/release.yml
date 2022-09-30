@@ -29,12 +29,10 @@ jobs:
           result-encoding: string
           script: |
             const commits = ${{ toJSON(github.event.commits.*.message) }}
-            for (const commit of commits) {
-              if (/^feat(\(.+\))?:/.test(commit)) {
-                return 'minor'
-              } else if (/^[a-z]+(\(.+\))?!:/.test(commit)) {
-                return 'major'
-              }
+            if (commits.some((commit) => /^[a-z]+(\(.+\))?!:/.test(commit))) {
+              return 'major'
+            } else if (commits.some((commit) => /^feat(\(.+\))?:/.test(commit))) {
+              return 'minor'
             }
             return 'patch'
       - name: Patch package
