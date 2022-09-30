@@ -1,3 +1,3 @@
 # conventional-commits
 
-Edit #2
+Edit #3
