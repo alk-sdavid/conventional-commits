@@ -1,0 +1,38 @@
+name: Running when pushing to main
+on:
+  push:
+    branches: [main]
+
+jobs:
+  name:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: npm
+    - name: Setup git
+      run: |
+        GIT_URL="https://alk-sdavid:${GITHUB_TOKEN}@github.com/alk-sdavid/conventional-commits.git"
+        git config --global user.email alk-sdavid@salsify.com
+        git config --global user.name alk-sdavid
+        git remote add ci $GIT_URL ||:
+      env:
+        GITHUB_TOKEN: ${{ secrets.SEB_GITHUB_TOKEN }}
+    - name: Patch package
+      run: |
+        npm version patch -m 'chore(release): v%s [ci skip]'
+    - name: Push tag
+      run: |
+        VERSION=$(node -p "require('./package.json').version")
+        git push ci v$VERSION
+    - name: Github release
+      run: |
+        VERSION=$(node -p "require('./package.json').version")
+        gh release create v$VERSION --title "$VERSION" --generate-notes
+      env:
+        GITHUB_TOKEN: ${{ secrets.SEB_GITHUB_TOKEN }}
+    - name: Push commit
+      run: |
+        git push ci main

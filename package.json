@@ -1,0 +1,25 @@
+{
+  "name": "conventional-commits",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alk-sdavid/conventional-commits.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alk-sdavid/conventional-commits/issues"
+  },
+  "homepage": "https://github.com/alk-sdavid/conventional-commits#readme",
+  "devDependencies": {
+    "@commitlint/cli": "~17.1.2",
+    "@commitlint/config-conventional": "~17.1.0",
+    "eslint": "~8.24.0",
+    "prettier": "~2.7.1"
+  }
+}
