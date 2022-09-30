@@ -1,3 +1,11 @@
+# 1.0.4
+
+## What's Changed
+* chore(doc): update readme by @alk-sdavid in https://github.com/alk-sdavid/conventional-commits/pull/3
+
+
+**Full Changelog**: https://github.com/alk-sdavid/conventional-commits/compare/v1.0.3...v1.0.4
+
 # 1.0.3
 
 **Full Changelog**: https://github.com/alk-sdavid/conventional-commits/compare/v1.0.2...v1.0.3
